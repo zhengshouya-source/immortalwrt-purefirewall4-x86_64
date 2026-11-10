@@ -33,6 +33,28 @@
 
 ---
 
+## 网络架构拓扑
+
+```mermaid
+flowchart LR
+    OLT[光猫 / PON 局端] -->|光纤| WANif[ethN · WAN 口<br/>PPPoE / DHCP]
+    WANif --> FW[Firewall4 + Nftables<br/>FullCone NAT1 · 全局 BBR]
+    FW --> BR[br-lan<br/>192.168.1.1]
+    subgraph EBPF["eBPF 透明代理层 (Daede / Honk 二选一)"]
+        DAED[Daede 纯血<br/>UDP 内核级零拷贝]
+        HONK[Honk + Doona<br/>Rust eBPF · sing-box 风格出站]
+    end
+    FW -. 接管 .-> DAED
+    FW -. 接管 .-> HONK
+    WG[WireGuard wg0<br/>内核态原生组网] --- FW
+    DOCK[Docker + FUSE3<br/>轻 NAS / 云盘挂载] --- BR
+    BR --> AP[AP / 交换机] --> PC[PC · 游戏机 · TV]
+```
+
+> Daede 与 Honk 同处 eBPF 层、互斥运行，详见 [使用指南](GUIDE.md)；WireGuard 以纯净虚拟网卡 `wg0` 受 Firewall4 统一调度，不与透明代理冲突。
+
+---
+
 ## 设计哲学
 
 折腾的尽头是 **回归稳定** 与 **极致精简**。
@@ -182,6 +204,8 @@ Intel (igc/igb/e1000e)、Realtek (r8125/r8126/r8168) 均采用官方独立优化
 - **sha256**：`e77a4b3c7ee8fe9fa731cdb1244f477d3272bbd5ac6b391d155f5e1593a4ea61`
 
 > 刷机前务必校验 sha256，确认镜像完整、未被篡改。当前发布为 UEFI（combined-efi）镜像；传统 Legacy BIOS 镜像如需可另行构建。
+
+📘 完整刷机流程与 Daede / Honk / WireGuard / Docker 配置步骤，见 **[GUIDE.md](GUIDE.md)**。
 
 ---
 
