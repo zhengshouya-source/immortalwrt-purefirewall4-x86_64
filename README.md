@@ -173,6 +173,18 @@ Intel (igc/igb/e1000e)、Realtek (r8125/r8126/r8168) 均采用官方独立优化
 
 ---
 
+## 下载 / Download
+
+首个稳定版已发布（标签 `v25.12.2`）：
+
+- **Release 页面**：https://github.com/zhengshouya-source/immortalwrt-purefirewall4-x86_64/releases/tag/v25.12.2
+- **镜像文件**：`immortalwrt-x86-64-generic-squashfs-combined-efi.img.11-1.gz`（UEFI / combined-efi，约 142 MB）
+- **sha256**：`e77a4b3c7ee8fe9fa731cdb1244f477d3272bbd5ac6b391d155f5e1593a4ea61`
+
+> 刷机前务必校验 sha256，确认镜像完整、未被篡改。当前发布为 UEFI（combined-efi）镜像；传统 Legacy BIOS 镜像如需可另行构建。
+
+---
+
 ## 使用须知：Daede / Honk 二选一
 
 两者底层均直接挂载内核 eBPF / cgroup 零拷贝透明代理，**网络栈接管逻辑互斥，切勿同时运行**。若 Daede 在运行，Honk 维护页会主动抛出 `proxy_conflict` 保护性报错并阻止接管。
